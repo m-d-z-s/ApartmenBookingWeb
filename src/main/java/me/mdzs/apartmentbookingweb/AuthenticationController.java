@@ -1,15 +1,19 @@
 package me.mdzs.apartmentbookingweb;
 
-import me.mdzs.apartmentbookingweb.identification.UserDaoImplDB;
+import me.mdzs.apartmentbookingweb.domain.User;
+import me.mdzs.apartmentbookingweb.identification.UserDaoImplJson;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
+import java.io.IOException;
+import java.util.List;
+
 @Controller
 public class AuthenticationController {
-    private final UserDaoImplDB userDao = new UserDaoImplDB();
+    private final UserDaoImplJson userDao = new UserDaoImplJson();
 
     // Отображение страницы логина
     @GetMapping("/login")
@@ -22,9 +26,10 @@ public class AuthenticationController {
     public String processLogin(@RequestParam String username,
                                @RequestParam String password,
                                @RequestParam String role,
-                               Model model) {
+                               Model model) throws IOException {
         // Простая логика проверки пользователя (замените на реальную)
-        if (username.equals("1") && password.equals("1") && role.equals("admin")) {
+        Boolean flag = checkIfUserExist(username, password);
+        if (userDao.getUser(username) != null & flag) {
             model.addAttribute("message", "Login successful!");
             return "welcome"; // возвращаем имя шаблона для успешного входа
         } else {
@@ -42,15 +47,29 @@ public class AuthenticationController {
     @PostMapping("/registration")
     public String processRegistration(@RequestParam String username,
                                       @RequestParam String password,
-                                      Model model) {
-        // Логика регистрации пользователя (замените на реальную логику)
-        if (username.isEmpty() || password.isEmpty()) {
-            model.addAttribute("error", "Username and password are required.");
-            return "registration"; // возвращаем форму регистрации с ошибкой
+                                      Model model) throws IOException {
+
+
+        // Проверяем, существует ли уже пользователь с таким именем
+        if (userDao.getUser(username) != null) {
+            model.addAttribute("error", "Username already exists. Please choose another one.");
+            return "registration"; // если пользователь существует, возвращаем форму с ошибкой
         }
 
-        // Пример успешной регистрации (замените на реальную логику)
-        model.addAttribute("message", "Registration successful! You can now log in.");
-        return "login"; // после успешной регистрации перенаправляем на страницу логина
+        // Создаем нового пользователя и сохраняем его в базе данных
+        User newUser = new User(username, password);
+        userDao.save(newUser); // сохраняем пользователя через UserDaoImplDB
+
+        // Перенаправляем пользователя на страницу логина после успешной регистрации
+        return "redirect:/login"; // перенаправление на страницу логина
+    }
+    private Boolean checkIfUserExist(String userName, String password) throws IOException {
+        List<User> userList = userDao.getAll();
+        for (User user : userList) {
+            if (user.getUserName().equals(userName) && user.getPassword().equals(password)) {
+                return true; // Возвращаем пользователя, если имя и пароль совпадают
+            }
+        }
+        return false; // Если пользователь не найден или пароль неверный
     }
 }
