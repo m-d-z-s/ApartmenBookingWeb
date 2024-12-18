@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class AuthenticationController {
@@ -20,12 +21,15 @@ public class AuthenticationController {
     public String showLoginForm() {
         return "login"; // возвращаем имя шаблона "login.html"
     }
+    @GetMapping("/registration")
+    public String showRegistrationForm() {
+        return "registration"; // возвращаем имя шаблона "registration.html"
+    }
 
     // Обработка отправки формы логина
     @PostMapping("/login")
     public String processLogin(@RequestParam String username,
                                @RequestParam String password,
-                               @RequestParam String role,
                                Model model) throws IOException {
         // Простая логика проверки пользователя (замените на реальную)
         Boolean flag = checkIfUserExist(username, password);
@@ -38,10 +42,7 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping("/registration")
-    public String showRegistrationForm() {
-        return "registration"; // возвращаем имя шаблона "registration.html"
-    }
+
 
     // Обработка отправки формы регистрации
     @PostMapping("/registration")
@@ -61,7 +62,7 @@ public class AuthenticationController {
         userDao.save(newUser); // сохраняем пользователя через UserDaoImplDB
 
         // Перенаправляем пользователя на страницу логина после успешной регистрации
-        return "redirect:/login"; // перенаправление на страницу логина
+        return "login"; // перенаправление на страницу логина
     }
     private Boolean checkIfUserExist(String userName, String password) throws IOException {
         List<User> userList = userDao.getAll();

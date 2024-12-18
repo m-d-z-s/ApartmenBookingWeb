@@ -2,11 +2,26 @@
   {
     "userName": "ira",
     "password": "1234",
-    "isAdmin": false
+    "isAdmin": true
   },
   {
     "userName": "smith",
     "password": "098",
+    "isAdmin": false
+  },
+  {
+    "userName": "irina",
+    "password": "111",
+    "isAdmin": false
+  },
+  {
+    "userName": "briv.21",
+    "password": "asd",
+    "isAdmin": false
+  },
+  {
+    "userName": "qwerty",
+    "password": "1q",
     "isAdmin": false
   }
 ]
