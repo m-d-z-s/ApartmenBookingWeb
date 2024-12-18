@@ -23,5 +23,15 @@
     "userName": "qwerty",
     "password": "1q",
     "isAdmin": false
+  },
+  {
+    "userName": "qwa",
+    "password": "qwa1",
+    "isAdmin": false
+  },
+  {
+    "userName": "qwsd",
+    "password": "123",
+    "isAdmin": false
   }
 ]
